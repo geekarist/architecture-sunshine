@@ -15,11 +15,13 @@
  */
 package com.example.android.sunshine.ui.detail;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.android.sunshine.AppExecutors;
 import com.example.android.sunshine.R;
 import com.example.android.sunshine.data.database.WeatherEntry;
 import com.example.android.sunshine.databinding.ActivityDetailBinding;
@@ -55,6 +57,11 @@ public class DetailActivity extends AppCompatActivity {
         Date date = new Date(timestamp);
 
         mViewModel = ViewModelProviders.of(this).get(DetailActivityViewModel.class);
+
+        LiveData<WeatherEntry> weather = mViewModel.getWeather();
+        weather.observe(this, weatherEntry -> {
+            if (weatherEntry != null) bindWeatherToUI(weatherEntry);
+        });
     }
 
     private void bindWeatherToUI(WeatherEntry weatherEntry) {
