@@ -62,6 +62,28 @@ public class DetailActivity extends AppCompatActivity {
         weather.observe(this, weatherEntry -> {
             if (weatherEntry != null) bindWeatherToUI(weatherEntry);
         });
+
+        loadWeather();
+    }
+
+    private void loadWeather() {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            threadSleep(4000);
+            Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
+            WeatherEntry entry = new WeatherEntry(1, 210, today, 88d, 99d, 71, 1030, 74, 5);
+            mViewModel.postWeather(entry);
+            threadSleep(2000);
+            entry = new WeatherEntry(1, 952, today, 50d, 60d, 46, 1044, 70, 100);
+            mViewModel.postWeather(entry);
+        });
+    }
+
+    private void threadSleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void bindWeatherToUI(WeatherEntry weatherEntry) {
