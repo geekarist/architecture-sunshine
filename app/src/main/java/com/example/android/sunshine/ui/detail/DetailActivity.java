@@ -21,7 +21,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.android.sunshine.AppExecutors;
 import com.example.android.sunshine.R;
 import com.example.android.sunshine.data.database.WeatherEntry;
 import com.example.android.sunshine.databinding.ActivityDetailBinding;
@@ -57,36 +56,14 @@ public class DetailActivity extends AppCompatActivity {
         long timestamp = getIntent().getLongExtra(WEATHER_ID_EXTRA, -1);
         Date date = new Date(timestamp);
 
-        mViewModel = ViewModelProviders.of(this).get(DetailActivityViewModel.class);
+        Date now = SunshineDateUtils.getNormalizedUtcDateForToday();
+        DetailViewModelFactory factory = InjectorUtils.provideDetailViewModelFactory(this, now);
+        mViewModel = ViewModelProviders.of(this, factory).get(DetailActivityViewModel.class);
 
         LiveData<WeatherEntry> weather = mViewModel.getWeather();
         weather.observe(this, weatherEntry -> {
             if (weatherEntry != null) bindWeatherToUI(weatherEntry);
         });
-
-//        loadWeather();
-
-        InjectorUtils.provideRepository(this).initializeData();
-    }
-
-    private void loadWeather() {
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            threadSleep(4000);
-            Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
-            WeatherEntry entry = new WeatherEntry(1, 210, today, 88d, 99d, 71, 1030, 74, 5);
-            mViewModel.postWeather(entry);
-            threadSleep(2000);
-            entry = new WeatherEntry(1, 952, today, 50d, 60d, 46, 1044, 70, 100);
-            mViewModel.postWeather(entry);
-        });
-    }
-
-    private void threadSleep(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private void bindWeatherToUI(WeatherEntry weatherEntry) {
