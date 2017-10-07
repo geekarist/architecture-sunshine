@@ -7,6 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import java.util.Date;
+import java.util.List;
 
 @Dao
 public interface WeatherDao {
@@ -19,4 +20,7 @@ public interface WeatherDao {
 
     @Query("SELECT count(date) FROM weather WHERE date >= :date")
     int countAllFutureWeather(Date date);
+
+    @Query("SELECT * FROM weather WHERE date >= :date")
+    LiveData<List<WeatherEntry>> findWeatherAfterDate(Date date);
 }

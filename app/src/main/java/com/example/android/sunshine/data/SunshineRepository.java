@@ -26,6 +26,7 @@ import com.example.android.sunshine.data.network.WeatherNetworkDataSource;
 import com.example.android.sunshine.utilities.SunshineDateUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Handles data operations in Sunshine. Acts as a mediator between {@link WeatherNetworkDataSource}
@@ -51,12 +52,11 @@ public class SunshineRepository {
 
         LiveData<WeatherEntry[]> downloadedWeatherForecasts =
                 mWeatherNetworkDataSource.getDownloadedWeatherForecasts();
-        downloadedWeatherForecasts.observeForever(weatherEntries -> {
-            AppExecutors.getInstance().diskIO().execute(() -> {
-                mWeatherDao.bulkInsert(weatherEntries);
-                Log.d(LOG_TAG, "New values inserted");
-            });
-        });
+        downloadedWeatherForecasts.observeForever(weatherEntries ->
+                AppExecutors.getInstance().diskIO().execute(() -> {
+                    mWeatherDao.bulkInsert(weatherEntries);
+                    Log.d(LOG_TAG, "New values inserted");
+                }));
     }
 
     public synchronized static SunshineRepository getInstance(
@@ -77,15 +77,15 @@ public class SunshineRepository {
      * Creates periodic sync tasks and checks to see if an immediate sync is required. If an
      * immediate sync is required, this method will take care of making sure that sync occurs.
      */
-    public synchronized void initializeData() {
+    private synchronized void initializeData() {
         mExecutors.diskIO().execute(() -> {
             if (isFetchNeeded()) startFetchWeatherService();
         });
     }
 
-    /**
+    /*
      * Database related operations
-     **/
+     */
 
     /**
      * Deletes old weather data because we don't need to keep multiple days' data
@@ -116,5 +116,10 @@ public class SunshineRepository {
     public LiveData<WeatherEntry> findWeatherByDate(Date date) {
         initializeData();
         return mWeatherDao.findWeatherByDate(date);
+    }
+
+    public LiveData<List<WeatherEntry>> findWeatherAfterDate(Date now) {
+        initializeData();
+        return mWeatherDao.findWeatherAfterDate(now);
     }
 }
