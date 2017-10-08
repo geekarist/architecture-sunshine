@@ -53,21 +53,22 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        long timestamp = getIntent().getLongExtra(WEATHER_ID_EXTRA, -1);
-        Date date = new Date(timestamp);
 
         Date now = SunshineDateUtils.getNormalizedUtcDateForToday();
         DetailViewModelFactory factory = InjectorUtils.provideDetailViewModelFactory(this, now);
         mViewModel = ViewModelProviders.of(this, factory).get(DetailActivityViewModel.class);
 
-        LiveData<WeatherEntry> weather = mViewModel.getWeather();
+        long selectedDateTs = getIntent().getLongExtra(WEATHER_ID_EXTRA, System.currentTimeMillis());
+        Date selectedDate = new Date(selectedDateTs);
+
+        LiveData<WeatherEntry> weather = mViewModel.findWeatherByDate(selectedDate);
         weather.observe(this, weatherEntry -> {
             if (weatherEntry != null) bindWeatherToUI(weatherEntry);
         });
     }
 
     private void bindWeatherToUI(WeatherEntry weatherEntry) {
-        /****************
+        /* **************
          * Weather Icon *
          ****************/
 
@@ -77,7 +78,7 @@ public class DetailActivity extends AppCompatActivity {
         /* Set the resource ID on the icon to display the art */
         mDetailBinding.primaryInfo.weatherIcon.setImageResource(weatherImageId);
 
-        /****************
+        /* **************
          * Weather Date *
          ****************/
         /*
@@ -92,7 +93,7 @@ public class DetailActivity extends AppCompatActivity {
         String dateText = SunshineDateUtils.getFriendlyDateString(DetailActivity.this, localDateMidnightGmt, true);
         mDetailBinding.primaryInfo.date.setText(dateText);
 
-        /***********************
+        /* *********************
          * Weather Description *
          ***********************/
         /* Use the weatherId to obtain the proper description */
@@ -108,7 +109,7 @@ public class DetailActivity extends AppCompatActivity {
         /* Set the content description on the weather image (for accessibility purposes) */
         mDetailBinding.primaryInfo.weatherIcon.setContentDescription(descriptionA11y);
 
-        /**************************
+        /* ************************
          * High (max) temperature *
          **************************/
 
@@ -128,7 +129,7 @@ public class DetailActivity extends AppCompatActivity {
         mDetailBinding.primaryInfo.highTemperature.setText(highString);
         mDetailBinding.primaryInfo.highTemperature.setContentDescription(highA11y);
 
-        /*************************
+        /* ***********************
          * Low (min) temperature *
          *************************/
 
@@ -146,7 +147,7 @@ public class DetailActivity extends AppCompatActivity {
         mDetailBinding.primaryInfo.lowTemperature.setText(lowString);
         mDetailBinding.primaryInfo.lowTemperature.setContentDescription(lowA11y);
 
-        /************
+        /* **********
          * Humidity *
          ************/
 
@@ -160,7 +161,7 @@ public class DetailActivity extends AppCompatActivity {
 
         mDetailBinding.extraDetails.humidityLabel.setContentDescription(humidityA11y);
 
-        /****************************
+        /* **************************
          * Wind speed and direction *
          ****************************/
         /* Read wind speed (in MPH) and direction (in compass degrees)*/
@@ -174,7 +175,7 @@ public class DetailActivity extends AppCompatActivity {
         mDetailBinding.extraDetails.windMeasurement.setContentDescription(windA11y);
         mDetailBinding.extraDetails.windLabel.setContentDescription(windA11y);
 
-        /************
+        /* **********
          * Pressure *
          ************/
         double pressure = weatherEntry.getPressure();

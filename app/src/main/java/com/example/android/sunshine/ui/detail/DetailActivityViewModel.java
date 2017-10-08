@@ -40,4 +40,8 @@ public class DetailActivityViewModel extends ViewModel {
     public LiveData<WeatherEntry> getWeather() {
         return mRepository.findWeatherByDate(mNow);
     }
+
+    LiveData<WeatherEntry> findWeatherByDate(Date selectedDate) {
+        return mRepository.findWeatherByDate(selectedDate);
+    }
 }
