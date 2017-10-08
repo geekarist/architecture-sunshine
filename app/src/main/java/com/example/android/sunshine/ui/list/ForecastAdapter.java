@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.R;
+import com.example.android.sunshine.data.database.ListWeatherEntry;
 import com.example.android.sunshine.data.database.WeatherEntry;
 import com.example.android.sunshine.utilities.SunshineDateUtils;
 import com.example.android.sunshine.utilities.SunshineWeatherUtils;
@@ -57,7 +58,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
      * boolean resources.
      */
     private final boolean mUseTodayLayout;
-    private List<WeatherEntry> mForecast;
+    private List<ListWeatherEntry> mForecast;
 
     /**
      * Creates a ForecastAdapter.
@@ -104,16 +105,16 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
      */
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-        WeatherEntry currentWeather = mForecast.get(position);
+        ListWeatherEntry currentWeather = mForecast.get(position);
 
-        /****************
+        /* **************
          * Weather Icon *
          ****************/
         int weatherIconId = currentWeather.getWeatherIconId();
         int weatherImageResourceId = getImageResourceId(weatherIconId, position);
         forecastAdapterViewHolder.iconView.setImageResource(weatherImageResourceId);
 
-        /****************
+        /* **************
          * Weather Date *
          ****************/
         long dateInMillis = currentWeather.getDate().getTime();
@@ -123,7 +124,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
          /* Display friendly date string */
         forecastAdapterViewHolder.dateView.setText(dateString);
 
-        /***********************
+        /* *********************
          * Weather Description *
          ***********************/
         String description = SunshineWeatherUtils.getStringForWeatherCondition(mContext, weatherIconId);
@@ -134,7 +135,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
         forecastAdapterViewHolder.descriptionView.setText(description);
         forecastAdapterViewHolder.descriptionView.setContentDescription(descriptionA11y);
 
-        /**************************
+        /* ************************
          * High (max) temperature *
          **************************/
         double highInCelsius = currentWeather.getMax();
@@ -151,7 +152,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
         forecastAdapterViewHolder.highTempView.setText(highString);
         forecastAdapterViewHolder.highTempView.setContentDescription(highA11y);
 
-        /*************************
+        /* ***********************
          * Low (min) temperature *
          *************************/
         double lowInCelsius = currentWeather.getMin();
@@ -232,7 +233,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
      *
      * @param newForecast the new list of forecasts to use as ForecastAdapter's data source
      */
-    void swapForecast(final List<WeatherEntry> newForecast) {
+    void swapForecast(final List<ListWeatherEntry> newForecast) {
         mForecast = newForecast;
         notifyDataSetChanged();
     }
@@ -240,9 +241,6 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
     /**
      * Returns the the layout id depending on whether the list item is a normal item or the larger
      * "today" list item.
-     *
-     * @param viewType
-     * @return
      */
     private int getLayoutIdByType(int viewType) {
         switch (viewType) {

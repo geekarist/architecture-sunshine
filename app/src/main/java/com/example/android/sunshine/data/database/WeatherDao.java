@@ -5,6 +5,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RoomWarnings;
 
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,8 @@ public interface WeatherDao {
     int countAllFutureWeather(Date date);
 
     @Query("SELECT * FROM weather WHERE date >= :date")
-    LiveData<List<WeatherEntry>> findWeatherAfterDate(Date date);
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    LiveData<List<ListWeatherEntry>> findWeatherAfterDate(Date date);
 
     @Query("DELETE FROM weather WHERE DATE < :date")
     void deleteOldWeatherBeforeDate(Date date);

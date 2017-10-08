@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
 import com.example.android.sunshine.AppExecutors;
+import com.example.android.sunshine.data.database.ListWeatherEntry;
 import com.example.android.sunshine.data.database.WeatherDao;
 import com.example.android.sunshine.data.database.WeatherEntry;
 import com.example.android.sunshine.data.network.WeatherNetworkDataSource;
@@ -121,7 +122,7 @@ public class SunshineRepository {
         return mWeatherDao.findWeatherByDate(date);
     }
 
-    public LiveData<List<WeatherEntry>> findWeatherAfterDate(Date now) {
+    public LiveData<List<ListWeatherEntry>> findWeatherAfterDate(Date now) {
         initializeData();
         return mWeatherDao.findWeatherAfterDate(now);
     }
