@@ -54,6 +54,8 @@ public class SunshineRepository {
                 mWeatherNetworkDataSource.getDownloadedWeatherForecasts();
         downloadedWeatherForecasts.observeForever(weatherEntries ->
                 AppExecutors.getInstance().diskIO().execute(() -> {
+                    deleteOldData();
+                    Log.d(LOG_TAG, "Old values deleted");
                     mWeatherDao.bulkInsert(weatherEntries);
                     Log.d(LOG_TAG, "New values inserted");
                 }));
@@ -91,7 +93,8 @@ public class SunshineRepository {
      * Deletes old weather data because we don't need to keep multiple days' data
      */
     private void deleteOldData() {
-        // TODO Finish this method when instructed
+        Date today = SunshineDateUtils.getNormalizedUtcDateForToday();
+        mExecutors.diskIO().execute(() -> mWeatherDao.deleteOldWeatherBeforeDate(today));
     }
 
     /**
