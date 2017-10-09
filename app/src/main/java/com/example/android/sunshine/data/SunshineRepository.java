@@ -81,7 +81,13 @@ public class SunshineRepository {
      * immediate sync is required, this method will take care of making sure that sync occurs.
      */
     private synchronized void initializeData() {
+        sync();
+        mWeatherNetworkDataSource.scheduleRecurringFetchWeatherSync();
+    }
+
+    public void sync() {
         mExecutors.diskIO().execute(() -> {
+            deleteOldData();
             if (isFetchNeeded()) startFetchWeatherService();
         });
     }

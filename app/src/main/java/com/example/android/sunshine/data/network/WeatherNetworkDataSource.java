@@ -32,20 +32,20 @@ import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
 
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides an API for doing all operations with the server data
  */
 public class WeatherNetworkDataSource {
     // The number of days we want our API to return, set to 14 days or two weeks
-    public static final int NUM_DAYS = 14;
+    static final int NUM_DAYS = 14;
     private static final String LOG_TAG = WeatherNetworkDataSource.class.getSimpleName();
 
     // Interval at which to sync with the weather. Use TimeUnit for convenience, rather than
     // writing out a bunch of multiplication ourselves and risk making a silly mistake.
-    private static final int SYNC_INTERVAL_HOURS = 3;
-    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
+//    private static final int SYNC_INTERVAL_HOURS = 3;
+//    private static final int SYNC_INTERVAL_SECONDS = (int) TimeUnit.HOURS.toSeconds(SYNC_INTERVAL_HOURS);
+    private static final int SYNC_INTERVAL_SECONDS = 30;
     private static final int SYNC_FLEXTIME_SECONDS = SYNC_INTERVAL_SECONDS / 3;
     private static final String SUNSHINE_SYNC_TAG = "sunshine-sync";
 

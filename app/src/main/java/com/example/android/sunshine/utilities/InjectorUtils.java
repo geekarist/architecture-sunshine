@@ -32,7 +32,7 @@ import java.util.Date;
  */
 public class InjectorUtils {
 
-    private static SunshineRepository provideRepository(Context context) {
+    public static SunshineRepository provideRepository(Context context) {
         SunshineDatabase database = SunshineDatabase.getInstance(context.getApplicationContext());
         AppExecutors executors = AppExecutors.getInstance();
         WeatherNetworkDataSource networkDataSource =
